@@ -6,6 +6,84 @@ ClassCrew is a production-ready, full-stack educational collaboration platform d
 
 ---
 
+## 🛠️ Step-by-Step Setup Guide
+
+Follow this exact sequence to run ClassCrew from scratch:
+
+### 1️⃣ Install Dependencies
+Run in the root directory:
+```bash
+# Install root, backend, and frontend dependencies
+npm install
+cd server && npm install && cd ..
+cd client && npm install && cd ..
+```
+
+### 2️⃣ Set Up Firebase Authentication
+1. Go to the [Firebase Console](https://console.firebase.google.com) and create a new project.
+2. Enable **Authentication** -> **Email/Password** provider.
+3. For the **Frontend**: Go to Project Settings -> General -> Web Apps -> Add Web App to obtain Firebase Client Web credentials.
+4. For the **Backend**: Go to Project Settings -> Service Accounts -> Generate New Private Key to obtain `project_id`, `client_email`, and `private_key`.
+
+### 3️⃣ Set Up Supabase Database
+1. Go to [Supabase](https://supabase.com) and create a new project.
+2. In Project Settings -> API: Obtain your `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` (service_role secret).
+3. In Project Settings -> Database -> Connection string (URI): Copy your PostgreSQL `DATABASE_URL` (format: `postgres://postgres:[PASSWORD]@db.[REF].supabase.co:5432/postgres`).
+
+### 4️⃣ Fill Environment Variables
+
+#### Backend Environment (`server/.env`)
+Copy `server/.env.example` to `server/.env`:
+```env
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+DATABASE_URL=postgres://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
+SUPABASE_URL=https://[YOUR-PROJECT-REF].supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+TEACHER_ACCESS_CODE=A3T26X100
+FIREBASE_PROJECT_ID=your_firebase_project_id
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk@your_project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+```
+
+#### Frontend Environment (`client/.env`)
+Copy `client/.env.example` to `client/.env`:
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+VITE_FIREBASE_APP_ID=your_firebase_app_id
+VITE_SUPABASE_URL=https://[YOUR-PROJECT-REF].supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+### 5️⃣ Run Database Migrations
+Run the automated migration runner to create all 15 tables and seed sample data:
+```bash
+npm run dev --prefix server # or:
+cd server && npm run migrate
+```
+*(Alternative: You can also paste `server/src/database/migrations/001_initial_schema.sql` and `002_seed_data.sql` directly into the Supabase Dashboard SQL Editor).*
+
+### 6️⃣ Start the Backend Server
+```bash
+cd server && npm run dev
+# Express API runs on http://localhost:5000
+```
+
+### 7️⃣ Start the Frontend Application
+In a separate terminal window:
+```bash
+cd client && npm run dev
+# React Vite application runs on http://localhost:5173
+```
+
+---
+
 ## ✨ Features Overview
 
 ### 👨‍🏫 Teacher Portal
@@ -27,92 +105,10 @@ ClassCrew is a production-ready, full-stack educational collaboration platform d
 
 ---
 
-## 🛠️ Technology Stack
-
-- **Frontend**: React 19, Vite, TypeScript, Tailwind CSS v4, Framer Motion, Lucide Icons, React Router v7
-- **Backend**: Node.js, Express, TypeScript, Zod Validation, Firebase Admin SDK
-- **Database**: Supabase PostgreSQL (14 tables with UUIDs, Enums, Cascading Keys, and Auto Triggers)
-- **Auth**: Firebase Authentication (Email/Password & Google OAuth) with Backend JWT verification
-
----
-
-## 📁 Repository Structure
-
-```
-ClassCrew/
-├── client/                     # React Frontend Application
-│   ├── src/
-│   │   ├── app/                # App Router & providers
-│   │   ├── components/         # Design system & shared components
-│   │   ├── contexts/           # AuthContext & ThemeContext
-│   │   ├── features/           # Auth, Landing, Teacher, Student, Classroom features
-│   │   ├── services/           # Fetch API service layer
-│   │   ├── styles/             # Global tokens, auth, and component CSS
-│   │   └── types/              # TypeScript definitions
-│   ├── .env.example
-│   └── vercel.json
-├── server/                     # Express Backend Server
-│   ├── src/
-│   │   ├── controllers/        # Express route controllers
-│   │   ├── database/           # Schema SQL migrations & seed scripts
-│   │   ├── middleware/         # Auth, Zod validation, Error handling
-│   │   ├── repositories/       # Database SQL query layer
-│   │   ├── routes/             # API routes
-│   │   └── services/           # Business logic services
-│   ├── .env.example
-│   └── render.yaml
-└── README.md
-```
-
----
-
-## 🚀 Quick Start & Local Setup
-
-### 1. Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **PostgreSQL Database**: Local or hosted on [Supabase](https://supabase.com)
-- **Firebase Project**: Created on [Firebase Console](https://console.firebase.google.com)
-
-### 2. Backend Setup
-```bash
-cd server
-npm install
-cp .env.example .env
-```
-Fill in your `DATABASE_URL`, `TEACHER_ACCESS_CODE` (default: `A3T26X100`), and Firebase Admin credentials in `.env`.
-
-Apply database migrations:
-```bash
-# Run database schema migration
-npm run migrate
-```
-
-Start the backend development server:
-```bash
-npm run dev
-# Server will run at http://localhost:5000
-```
-
-### 3. Frontend Setup
-```bash
-cd client
-npm install
-cp .env.example .env
-```
-Fill in your Firebase Web App credentials in `.env`.
-
-Start Vite dev server:
-```bash
-npm run dev
-# Application will run at http://localhost:5173
-```
-
----
-
 ## 🔐 Demo Credentials & Teacher Code
 
-- **Teacher Access Code**: `A3T26X100` (Required when registering a Teacher account)
-- **Demo Accounts** (If seeded via `002_seed_data.sql`):
+- **Teacher Access Code**: `A3T26X100` *(Required when registering a Teacher account)*
+- **Demo Seed Accounts**:
   - Teacher: `teacher@classcrew.com`
   - Student: `student1@classcrew.com`
 

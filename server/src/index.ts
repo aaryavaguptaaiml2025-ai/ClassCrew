@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import { errorHandler } from './middleware/errorHandler.js';
 import { logger } from './config/logger.js';
+import { env } from './config/env.js';
 import authRoutes from './routes/auth.routes.js';
 import classroomRoutes from './routes/classroom.routes.js';
 import assignmentRoutes from './routes/assignment.routes.js';
@@ -18,26 +19,44 @@ import analyticsRoutes from './routes/analytics.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT;
 
 app.use(helmet());
+
+// Dynamic CORS configuration allowing dev ports (5173, 5174, etc.)
+const allowedOrigins = [
+  env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || env.NODE_ENV !== 'production') {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true,
 }));
+
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 20,
+  max: 50,
   message: { success: false, message: 'Too many attempts. Please try again later.', data: null, errors: null },
 });
 
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 500,
   message: { success: false, message: 'Too many requests. Please slow down.', data: null, errors: null },
 });
 
@@ -62,7 +81,7 @@ app.get('/api/health', (_req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  logger.info(`ClassCrew API server running on port ${PORT}`);
+  logger.info(`🚀 ClassCrew API server running on port ${PORT}`);
 });
 
 export default app;

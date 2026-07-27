@@ -31,12 +31,14 @@ export default function LoginPage() {
       navigate('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Login failed';
-      if (message.includes('invalid-credential') || message.includes('wrong-password')) {
-        setError('Invalid email or password. Please try again.');
+      if (message.includes('invalid-credential') || message.includes('wrong-password') || message.includes('INVALID_LOGIN_CREDENTIALS')) {
+        setError('Invalid email or password. Please try again or click "Sign Up".');
       } else if (message.includes('user-not-found')) {
-        setError('No account found with this email.');
+        setError('No account found with this email. Please click "Sign Up".');
+      } else if (message.includes('invalid-api-key') || message.includes('API_KEY_INVALID') || message.includes('api-key-not-valid')) {
+        setError('Firebase API Key is missing or invalid. Please update client/.env with your Firebase project credentials.');
       } else if (message.includes('too-many-requests')) {
-        setError('Too many attempts. Please try again later.');
+        setError('Too many login attempts. Please try again later.');
       } else {
         setError(message);
       }
@@ -54,7 +56,11 @@ export default function LoginPage() {
       navigate('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Google login failed';
-      setError(message);
+      if (message.includes('invalid-api-key') || message.includes('API_KEY_INVALID')) {
+        setError('Firebase API Key is invalid in client/.env');
+      } else {
+        setError(message);
+      }
     } finally {
       setIsLoading(false);
     }

@@ -58,16 +58,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Teacher | Student | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = async (): Promise<boolean> => {
     try {
       const response = await api.get<AuthUser>('/auth/me');
       if (response.success && response.data) {
         setUser(response.data.user);
         setProfile(response.data.profile);
+        return true;
       }
+      setUser(null);
+      setProfile(null);
+      return false;
     } catch {
       setUser(null);
       setProfile(null);
+      return false;
     }
   };
 
@@ -89,18 +94,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const credential = await signInWithEmailAndPassword(auth, email, password);
     setFirebaseUser(credential.user);
-    await fetchUserProfile();
+    const hasProfile = await fetchUserProfile();
+    if (!hasProfile) {
+      throw new Error('Account profile not found in database. Please click "Sign Up" to register.');
+    }
   };
 
   const loginWithGoogle = async () => {
     const credential = await signInWithPopup(auth, googleProvider);
     setFirebaseUser(credential.user);
-
-    try {
-      await fetchUserProfile();
-    } catch {
+    const hasProfile = await fetchUserProfile();
+    if (!hasProfile) {
       await signOut(auth);
-      throw new Error('No account found. Please register first.');
+      throw new Error('No registered account found with this Google email. Please register first.');
     }
   };
 
