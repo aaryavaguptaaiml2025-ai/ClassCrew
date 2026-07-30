@@ -43,13 +43,13 @@ export const authService = {
 
   async getAuthenticatedUser(firebaseUid: string) {
     const user = await userRepository.findByFirebaseUid(firebaseUid);
-    if (!user) throw new AppError('User not found', 404);
+    if (!user) return null;
 
     const profile = user.role === 'teacher'
       ? await userRepository.getTeacherProfile(user.id)
       : await userRepository.getStudentProfile(user.id);
 
-    if (!profile) throw new AppError('Profile not found', 404);
+    if (!profile) return null;
     return { user, profile };
   },
 };

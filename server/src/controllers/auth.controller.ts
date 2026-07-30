@@ -26,6 +26,10 @@ export const authController = {
     try {
       const firebaseUid = req.firebaseUid!;
       const result = await authService.getAuthenticatedUser(firebaseUid);
+      if (!result) {
+        sendSuccess(res, null, 'User profile not found in database');
+        return;
+      }
       sendSuccess(res, result);
     } catch (error) {
       next(error);

@@ -21,7 +21,12 @@ import notificationRoutes from './routes/notification.routes.js';
 const app = express();
 const PORT = env.PORT;
 
-app.use(helmet());
+// Helmet with allow-popups COOP policy to support Firebase Auth popup windows
+app.use(
+  helmet({
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+  })
+);
 
 // Dynamic CORS configuration allowing dev ports (5173, 5174, etc.)
 const allowedOrigins = [
