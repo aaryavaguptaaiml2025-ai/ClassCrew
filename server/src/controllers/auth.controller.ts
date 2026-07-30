@@ -8,12 +8,14 @@ export const authController = {
     try {
       const { role } = req.body;
       const firebaseUid = req.firebaseUid!;
+      // Use the verified email from Firebase token, not from req.body
+      const verifiedEmail = req.firebaseEmail || req.body.email;
 
       let result;
       if (role === 'teacher') {
-        result = await authService.registerTeacher(firebaseUid, req.body);
+        result = await authService.registerTeacher(firebaseUid, verifiedEmail, req.body);
       } else {
-        result = await authService.registerStudent(firebaseUid, req.body);
+        result = await authService.registerStudent(firebaseUid, verifiedEmail, req.body);
       }
 
       sendCreated(res, result, 'Registration successful');

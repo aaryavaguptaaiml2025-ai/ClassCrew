@@ -7,6 +7,7 @@ import {
   signOut,
   sendPasswordResetEmail,
   type User as FirebaseUser,
+  type UserCredential,
 } from 'firebase/auth';
 import { auth, googleProvider } from '@/lib/firebase';
 import { api } from '@/services/api';
@@ -22,9 +23,11 @@ interface AuthContextType {
   profile: Teacher | Student | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  needsRegistration: boolean;
   login: (email: string, password: string) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: () => Promise<{ needsRegistration: boolean }>;
   register: (email: string, password: string, profileData: RegisterPayload) => Promise<void>;
+  registerWithGoogle: (profileData: Omit<RegisterPayload, 'email'> & { email?: string }) => Promise<void>;
   registerStudent: (data: StudentRegistrationData) => Promise<void>;
   registerTeacher: (data: TeacherRegistrationData) => Promise<void>;
   logout: () => Promise<void>;
@@ -57,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Teacher | Student | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [needsRegistration, setNeedsRegistration] = useState(false);
 
   const fetchUserProfile = async (): Promise<boolean> => {
     try {
@@ -64,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (response.success && response.data) {
         setUser(response.data.user);
         setProfile(response.data.profile);
+        setNeedsRegistration(false);
         return true;
       }
       setUser(null);
@@ -80,10 +85,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
       if (fbUser) {
-        await fetchUserProfile();
+        const hasProfile = await fetchUserProfile();
+        if (!hasProfile) {
+          setNeedsRegistration(true);
+        }
       } else {
         setUser(null);
         setProfile(null);
+        setNeedsRegistration(false);
       }
       setIsLoading(false);
     });
@@ -96,50 +105,105 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setFirebaseUser(credential.user);
     const hasProfile = await fetchUserProfile();
     if (!hasProfile) {
-      throw new Error('Account profile not found in database. Please click "Sign Up" to register.');
+      // User exists in Firebase but not in DB — sign them out
+      await signOut(auth);
+      setFirebaseUser(null);
+      throw new Error('Account profile not found. Please click "Sign Up" to create your account.');
     }
   };
 
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = async (): Promise<{ needsRegistration: boolean }> => {
     const credential = await signInWithPopup(auth, googleProvider);
     setFirebaseUser(credential.user);
     const hasProfile = await fetchUserProfile();
     if (!hasProfile) {
-      await signOut(auth);
-      throw new Error('No registered account found with this Google email. Please register first.');
+      // Keep user signed in — they need to complete registration
+      setNeedsRegistration(true);
+      return { needsRegistration: true };
     }
+    return { needsRegistration: false };
+  };
+
+  // Register with Google: user is already authenticated via Google popup,
+  // just need to create the backend profile
+  const registerWithGoogle = async (profileData: Omit<RegisterPayload, 'email'> & { email?: string }) => {
+    if (!auth.currentUser) {
+      throw new Error('No authenticated user. Please sign in with Google first.');
+    }
+
+    const email = auth.currentUser.email || profileData.email;
+    if (!email) {
+      throw new Error('Email is required for registration.');
+    }
+
+    await api.post('/auth/register', {
+      ...profileData,
+      email,
+    });
+
+    await fetchUserProfile();
+    setNeedsRegistration(false);
   };
 
   const registerStudent = async (data: StudentRegistrationData) => {
-    const credential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-    setFirebaseUser(credential.user);
+    let credential: UserCredential | null = null;
+    try {
+      credential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      setFirebaseUser(credential.user);
 
-    await api.post('/auth/register', {
-      role: 'student',
-      name: data.name,
-      email: data.email,
-      rollNumber: data.rollNumber,
-      branch: data.branch,
-      semester: data.semester,
-      section: data.section,
-    });
+      await api.post('/auth/register', {
+        role: 'student',
+        name: data.name,
+        email: data.email,
+        rollNumber: data.rollNumber,
+        branch: data.branch,
+        semester: data.semester,
+        section: data.section,
+      });
 
-    await fetchUserProfile();
+      await fetchUserProfile();
+    } catch (error) {
+      // Rollback: delete the Firebase user if backend registration failed
+      if (credential?.user) {
+        try {
+          await credential.user.delete();
+        } catch {
+          // If delete fails, sign out at minimum
+          await signOut(auth);
+        }
+        setFirebaseUser(null);
+      }
+      throw error;
+    }
   };
 
   const registerTeacher = async (data: TeacherRegistrationData) => {
-    const credential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-    setFirebaseUser(credential.user);
+    let credential: UserCredential | null = null;
+    try {
+      credential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      setFirebaseUser(credential.user);
 
-    await api.post('/auth/register', {
-      role: 'teacher',
-      name: data.name,
-      email: data.email,
-      department: data.department,
-      accessCode: data.accessCode,
-    });
+      await api.post('/auth/register', {
+        role: 'teacher',
+        name: data.name,
+        email: data.email,
+        department: data.department,
+        accessCode: data.accessCode,
+      });
 
-    await fetchUserProfile();
+      await fetchUserProfile();
+    } catch (error) {
+      // Rollback: delete the Firebase user if backend registration failed
+      if (credential?.user) {
+        try {
+          await credential.user.delete();
+        } catch {
+          await signOut(auth);
+        }
+        setFirebaseUser(null);
+      }
+      throw error;
+    }
   };
 
   const register = async (email: string, password: string, profileData: RegisterPayload) => {
@@ -155,6 +219,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setFirebaseUser(null);
     setUser(null);
     setProfile(null);
+    setNeedsRegistration(false);
   };
 
   const resetPassword = async (email: string) => {
@@ -173,9 +238,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         isLoading,
         isAuthenticated: !!user,
+        needsRegistration,
         login,
         loginWithGoogle,
         register,
+        registerWithGoogle,
         registerStudent,
         registerTeacher,
         logout,

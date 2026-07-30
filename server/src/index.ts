@@ -21,14 +21,13 @@ import notificationRoutes from './routes/notification.routes.js';
 const app = express();
 const PORT = env.PORT;
 
-// Helmet with allow-popups COOP policy to support Firebase Auth popup windows
 app.use(
   helmet({
     crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
   })
 );
 
-// Dynamic CORS configuration allowing dev ports (5173, 5174, etc.)
+// CORS: in production, validate origins; in development, allow all
 const allowedOrigins = [
   env.CLIENT_URL,
   'http://localhost:5173',
@@ -40,16 +39,19 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || env.NODE_ENV !== 'production') {
-      callback(null, true);
-    } else {
-      callback(null, true);
-    }
+    // Allow requests with no origin (server-to-server, health checks)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // In development, allow all origins
+    if (env.NODE_ENV !== 'production') return callback(null, true);
+    // In production, reject unknown origins
+    callback(new Error(`CORS: origin ${origin} not allowed`));
   },
   credentials: true,
 }));
 
-app.use(morgan('dev'));
+// Logging: structured in production, colorful in development
+app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -68,6 +70,15 @@ const generalLimiter = rateLimit({
 app.use('/api/auth', authLimiter);
 app.use('/api', generalLimiter);
 
+// Health check endpoints (Render requires GET / or /health to return 200)
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok', service: 'classcrew-api' });
+});
+
+app.get('/api/health', (_req, res) => {
+  res.json({ success: true, message: 'ClassCrew API is running', data: { timestamp: new Date().toISOString() }, errors: null });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/classrooms', classroomRoutes);
 app.use('/api/assignments', assignmentRoutes);
@@ -79,13 +90,10 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'ClassCrew API is running', data: { timestamp: new Date().toISOString() }, errors: null });
-});
-
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+// Bind to 0.0.0.0 for Render/Docker compatibility
+app.listen(PORT, '0.0.0.0', () => {
   logger.info(`🚀 ClassCrew API server running on port ${PORT}`);
 });
 

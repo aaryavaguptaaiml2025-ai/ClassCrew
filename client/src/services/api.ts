@@ -4,6 +4,8 @@ import { auth } from '@/lib/firebase';
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 async function getAuthHeaders(): Promise<Record<string, string>> {
+  // Wait for Firebase to initialize auth state from IndexedDB/localStorage
+  await auth.authStateReady();
   const user = auth.currentUser;
   if (!user) return {};
 

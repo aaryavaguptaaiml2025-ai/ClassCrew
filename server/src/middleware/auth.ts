@@ -4,6 +4,7 @@ import { logger } from '../config/logger.js';
 
 export interface AuthenticatedRequest extends Request {
   firebaseUid?: string;
+  firebaseEmail?: string;
   userRole?: 'teacher' | 'student';
   userId?: string;
 }
@@ -26,6 +27,7 @@ export async function authenticate(req: AuthenticatedRequest, res: Response, nex
   try {
     const decodedToken = await firebaseAuth.verifyIdToken(token);
     req.firebaseUid = decodedToken.uid;
+    req.firebaseEmail = decodedToken.email;
     next();
   } catch (error) {
     logger.warn('Invalid Firebase token', { error });

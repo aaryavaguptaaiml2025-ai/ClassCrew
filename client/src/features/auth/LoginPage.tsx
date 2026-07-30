@@ -32,11 +32,11 @@ export default function LoginPage() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Login failed';
       if (message.includes('invalid-credential') || message.includes('wrong-password') || message.includes('INVALID_LOGIN_CREDENTIALS')) {
-        setError('Invalid email or password. Please try again or click "Sign Up".');
+        setError('Invalid email or password. Please try again.');
       } else if (message.includes('user-not-found')) {
-        setError('No account found with this email. Please click "Sign Up".');
+        setError('No account found with this email. Please sign up.');
       } else if (message.includes('invalid-api-key') || message.includes('API_KEY_INVALID') || message.includes('api-key-not-valid')) {
-        setError('Firebase API Key is missing or invalid. Please update client/.env with your Firebase project credentials.');
+        setError('Firebase API Key is missing or invalid. Check client/.env configuration.');
       } else if (message.includes('too-many-requests')) {
         setError('Too many login attempts. Please try again later.');
       } else {
@@ -51,13 +51,21 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
     try {
-      await loginWithGoogle();
-      toast.success('Welcome back!');
-      navigate('/dashboard');
+      const result = await loginWithGoogle();
+      if (result.needsRegistration) {
+        // Google user exists but no DB profile — redirect to register to complete profile
+        toast('Please complete your profile to continue.', { icon: '📝' });
+        navigate('/register');
+      } else {
+        toast.success('Welcome back!');
+        navigate('/dashboard');
+      }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Google login failed';
       if (message.includes('invalid-api-key') || message.includes('API_KEY_INVALID')) {
-        setError('Firebase API Key is invalid in client/.env');
+        setError('Firebase API Key is invalid. Check client/.env configuration.');
+      } else if (message.includes('popup-closed-by-user')) {
+        setError('');
       } else {
         setError(message);
       }

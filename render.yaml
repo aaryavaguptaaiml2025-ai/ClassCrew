@@ -1,13 +1,11 @@
 services:
   - type: web
     name: classcrew-backend
-    env: node
+    runtime: node
+    rootDir: server
     buildCommand: npm install && npm run build
     startCommand: npm start
+    healthCheckPath: /
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 5000
-      - key: TEACHER_ACCESS_CODE
-        value: A3T26X100
