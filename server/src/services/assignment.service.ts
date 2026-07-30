@@ -1,6 +1,7 @@
 import { assignmentRepository } from '../repositories/assignment.repository.js';
 import { classroomRepository } from '../repositories/classroom.repository.js';
 import { notificationRepository } from '../repositories/notification.repository.js';
+import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { logger } from '../config/logger.js';
 
@@ -61,6 +62,30 @@ export const assignmentService = {
 
   async getByClassroom(classroomId: string) {
     return assignmentRepository.findByClassroomId(classroomId);
+  },
+
+  async getByUser(userId: string, role: string) {
+    if (role === 'teacher') {
+      const teacher = await userRepository.getTeacherProfile(userId);
+      if (!teacher) throw new AppError('Teacher profile not found', 404);
+      const classrooms = await classroomRepository.findByTeacherId(teacher.teacher_id);
+      const allAssignments = [];
+      for (const c of classrooms) {
+        const assignments = await assignmentRepository.findByClassroomId(c.classroom_id);
+        allAssignments.push(...assignments.map((a) => ({ ...a, classroomTitle: c.title })));
+      }
+      return allAssignments;
+    } else {
+      const student = await userRepository.getStudentProfile(userId);
+      if (!student) throw new AppError('Student profile not found', 404);
+      const classrooms = await classroomRepository.findByStudentId(student.student_id);
+      const allAssignments = [];
+      for (const c of classrooms) {
+        const assignments = await assignmentRepository.findByClassroomId(c.classroom_id);
+        allAssignments.push(...assignments.map((a) => ({ ...a, classroomTitle: c.title })));
+      }
+      return allAssignments;
+    }
   },
 
   async getDetail(assignmentId: string) {

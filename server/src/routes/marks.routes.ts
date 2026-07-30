@@ -7,7 +7,9 @@ import { marksController } from '../controllers/marks.controller.js';
 const router = Router();
 
 router.get('/', authenticate, marksController.list);
+router.post('/', authenticate, marksController.saveBatch);
 router.patch('/:id', authenticate, validate(updateMarksSchema), marksController.update);
+router.get('/student', authenticate, marksController.studentMarks);
 router.get('/student/:id', authenticate, marksController.studentMarks);
 
 export default router;

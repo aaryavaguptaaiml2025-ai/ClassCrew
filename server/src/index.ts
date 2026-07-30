@@ -94,7 +94,7 @@ app.use(errorHandler);
 
 // Bind to 0.0.0.0 for Render/Docker compatibility
 app.listen(PORT, '0.0.0.0', () => {
-  logger.info(`🚀 ClassCrew API server running on port ${PORT}`);
+  logger.info(`ClassCrew API server running on port ${PORT}`);
 });
 
 export default app;

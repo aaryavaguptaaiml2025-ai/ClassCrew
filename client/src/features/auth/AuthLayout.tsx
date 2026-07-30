@@ -87,10 +87,10 @@ export default function AuthLayout({ children, title, subtitle }: AuthLayoutProp
 
             <div className="auth-layout__hero-features">
               {[
-                { icon: '📋', label: 'Smart Assignments' },
-                { icon: '📊', label: 'Live Analytics' },
-                { icon: '🧠', label: 'Interactive Quizzes' },
-                { icon: '📅', label: 'Attendance Tracking' },
+                { icon: 'F1', label: 'Smart Assignments' },
+                { icon: 'F2', label: 'Live Analytics' },
+                { icon: 'F3', label: 'Interactive Quizzes' },
+                { icon: 'F4', label: 'Attendance Tracking' },
               ].map((feature, i) => (
                 <motion.div
                   key={feature.label}

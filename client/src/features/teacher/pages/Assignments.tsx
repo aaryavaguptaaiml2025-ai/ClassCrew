@@ -100,7 +100,7 @@ export default function TeacherAssignments() {
     if (!gradingSubmission) return;
 
     try {
-      const res = await api.patch(`/assignments/submissions/${gradingSubmission.submissionId}`, {
+      const res = await api.patch(`/assignments/${gradingSubmission.submissionId}/review`, {
         status: 'reviewed',
         teacherMarks: Number(teacherMarks),
         teacherFeedback,

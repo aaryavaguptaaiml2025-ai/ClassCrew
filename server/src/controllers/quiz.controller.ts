@@ -10,9 +10,15 @@ export const quizController = {
   async list(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const classroomId = getQueryString(req, 'classroomId');
-      if (!classroomId) throw new AppError('classroomId is required', 400);
-      const quizzes = await quizService.getByClassroom(classroomId);
-      sendSuccess(res, quizzes);
+      if (classroomId) {
+        const quizzes = await quizService.getByClassroom(classroomId);
+        sendSuccess(res, quizzes);
+      } else {
+        const user = await userRepository.findByFirebaseUid(req.firebaseUid!);
+        if (!user) throw new AppError('User not found', 404);
+        const quizzes = await quizService.getByUser(user.id, user.role);
+        sendSuccess(res, quizzes);
+      }
     } catch (error) { next(error); }
   },
 

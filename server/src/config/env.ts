@@ -37,7 +37,7 @@ function validateServerEnv(): ServerEnv {
 
   if (missing.length > 0) {
     console.warn('\n======================================================');
-    console.warn('⚠️  CLASSCREW CONFIGURATION WARNING');
+    console.warn('CLASSCREW CONFIGURATION WARNING');
     console.warn('Missing environment variables:');
     missing.forEach((v) => console.warn(`  - ${v}`));
     console.warn('Copy server/.env.example to server/.env and fill in credentials.');

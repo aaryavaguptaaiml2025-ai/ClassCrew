@@ -1,6 +1,7 @@
 import type { Response, NextFunction } from 'express';
 import type { AuthenticatedRequest } from '../middleware/auth.js';
 import { assignmentService } from '../services/assignment.service.js';
+import { classroomService } from '../services/classroom.service.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { sendSuccess, sendCreated } from '../utils/response.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -10,9 +11,16 @@ export const assignmentController = {
   async list(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const classroomId = getQueryString(req, 'classroomId');
-      if (!classroomId) throw new AppError('classroomId query param is required', 400);
-      const assignments = await assignmentService.getByClassroom(classroomId);
-      sendSuccess(res, assignments);
+      if (classroomId) {
+        const assignments = await assignmentService.getByClassroom(classroomId);
+        sendSuccess(res, assignments);
+      } else {
+        // Get assignments across all classrooms for the user
+        const user = await userRepository.findByFirebaseUid(req.firebaseUid!);
+        if (!user) throw new AppError('User not found', 404);
+        const assignments = await assignmentService.getByUser(user.id, user.role);
+        sendSuccess(res, assignments);
+      }
     } catch (error) { next(error); }
   },
 

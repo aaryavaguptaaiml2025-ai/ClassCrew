@@ -6,21 +6,29 @@ const projectId = process.env.FIREBASE_PROJECT_ID || '';
 const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || '';
 const privateKey = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
 
-if (!projectId || !clientEmail || !privateKey) {
-  console.warn('⚠️  Firebase Admin credentials not configured. Auth token verification will fail.');
+const hasCredentials = !!(projectId && clientEmail && privateKey && privateKey !== 'unconfigured');
+
+if (!hasCredentials) {
+  console.warn('Firebase Admin credentials not configured. Auth token verification will fail.');
   console.warn('   Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY in server/.env');
 }
 
 let app: App;
 
 if (getApps().length === 0) {
-  app = initializeApp({
-    credential: cert({
-      projectId: projectId || 'unconfigured',
-      clientEmail: clientEmail || 'unconfigured@example.com',
-      privateKey: privateKey || 'unconfigured',
-    }),
-  });
+  const appConfig: Record<string, unknown> = { projectId: projectId || 'classcrew-local' };
+  if (hasCredentials) {
+    try {
+      appConfig.credential = cert({
+        projectId,
+        clientEmail,
+        privateKey,
+      });
+    } catch (err) {
+      console.warn('Failed to initialize Firebase Admin credential:', (err instanceof Error ? err.message : String(err)));
+    }
+  }
+  app = initializeApp(appConfig);
 } else {
   app = getApps()[0];
 }

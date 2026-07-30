@@ -12,7 +12,9 @@ router.post('/', authenticate, validate(createQuizSchema), quizController.create
 router.patch('/:id', authenticate, quizController.update);
 router.delete('/:id', authenticate, quizController.delete);
 router.get('/:id/start', authenticate, quizController.start);
+router.get('/:id/questions', authenticate, quizController.start);
 router.post('/:id/submit', authenticate, validate(submitQuizSchema), quizController.submitAttempt);
 router.get('/:id/results', authenticate, quizController.results);
+router.get('/:id/attempts', authenticate, quizController.results);
 
 export default router;

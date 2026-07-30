@@ -101,7 +101,7 @@ export default function ForgotPasswordPage() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <span>⚠️</span> {error}
+          {error}
         </motion.div>
       )}
 

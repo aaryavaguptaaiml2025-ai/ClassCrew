@@ -62,7 +62,7 @@ export default function ClassroomDetailPage() {
   if (!classroom) {
     return (
       <div className="empty-state card">
-        <div className="empty-state__icon">⚠️</div>
+        <div className="empty-state__icon"></div>
         <h3 className="empty-state__title">Classroom Not Found</h3>
         <p className="empty-state__text">The classroom you requested could not be found or you do not have permission.</p>
         <Link to="/my-classrooms" className="btn btn--primary">

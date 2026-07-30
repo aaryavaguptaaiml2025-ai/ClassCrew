@@ -6,12 +6,12 @@ import { Sun, Moon } from 'lucide-react';
 import '@/styles/landing.css';
 
 const FEATURES = [
-  { icon: '📚', title: 'Smart Classrooms', text: 'Create classrooms instantly with auto-generated join codes. Students join in seconds.', color: 'rgba(168,85,247,0.1)' },
-  { icon: '📝', title: 'Assignments', text: 'Create, publish, and track assignments. Students submit with one click. Teachers review inline.', color: 'rgba(236,72,153,0.1)' },
-  { icon: '🧠', title: 'Interactive Quizzes', text: 'MCQ and true/false quizzes with auto-grading, timers, and instant score reporting.', color: 'rgba(99,102,241,0.1)' },
-  { icon: '📊', title: 'Live Analytics', text: 'Real-time dashboards with attendance trends, performance charts, and class insights.', color: 'rgba(59,130,246,0.1)' },
-  { icon: '✅', title: 'Attendance', text: 'Mark attendance in bulk. Students see their percentage live. Teachers see patterns.', color: 'rgba(34,197,94,0.1)' },
-  { icon: '🔔', title: 'Notifications', text: 'Instant alerts for new assignments, quiz results, and classroom updates.', color: 'rgba(245,158,11,0.1)' },
+  { icon: 'CC1', title: 'Smart Classrooms', text: 'Create classrooms instantly with auto-generated join codes. Students join in seconds.', color: 'rgba(168,85,247,0.1)' },
+  { icon: 'CC2', title: 'Assignments', text: 'Create, publish, and track assignments. Students submit with one click. Teachers review inline.', color: 'rgba(236,72,153,0.1)' },
+  { icon: 'CC3', title: 'Interactive Quizzes', text: 'MCQ and true/false quizzes with auto-grading, timers, and instant score reporting.', color: 'rgba(99,102,241,0.1)' },
+  { icon: 'CC4', title: 'Live Analytics', text: 'Real-time dashboards with attendance trends, performance charts, and class insights.', color: 'rgba(59,130,246,0.1)' },
+  { icon: 'CC5', title: 'Attendance', text: 'Mark attendance in bulk. Students see their percentage live. Teachers see patterns.', color: 'rgba(34,197,94,0.1)' },
+  { icon: 'CC6', title: 'Notifications', text: 'Instant alerts for new assignments, quiz results, and classroom updates.', color: 'rgba(245,158,11,0.1)' },
 ];
 
 const STEPS = [
@@ -73,7 +73,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          ✨ Built for modern classrooms
+          Built for modern classrooms
         </motion.div>
 
         <motion.h1
@@ -199,7 +199,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="landing-footer">
-        <p className="landing-footer__text">© 2026 ClassCrew. Built with ❤️ for education.</p>
+        <p className="landing-footer__text">&copy; 2026 ClassCrew. Built for education.</p>
         <div className="landing-footer__links">
           <a href="#" className="landing-footer__link">Privacy</a>
           <a href="#" className="landing-footer__link">Terms</a>

@@ -1,6 +1,7 @@
 import { quizRepository } from '../repositories/quiz.repository.js';
 import { classroomRepository } from '../repositories/classroom.repository.js';
 import { marksRepository } from '../repositories/marks.repository.js';
+import { userRepository } from '../repositories/user.repository.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { logger } from '../config/logger.js';
 
@@ -47,6 +48,40 @@ export const quizService = {
       return { ...q, questionCount, attemptCount };
     }));
     return enriched;
+  },
+
+  async getByUser(userId: string, role: string) {
+    if (role === 'teacher') {
+      const teacher = await userRepository.getTeacherProfile(userId);
+      if (!teacher) throw new AppError('Teacher profile not found', 404);
+      const classrooms = await classroomRepository.findByTeacherId(teacher.teacher_id);
+      const allQuizzes = [];
+      for (const c of classrooms) {
+        const quizzes = await quizRepository.findByClassroomId(c.classroom_id);
+        const enriched = await Promise.all(quizzes.map(async (q) => {
+          const questionCount = await quizRepository.getQuestionCount(q.quiz_id);
+          const attemptCount = await quizRepository.getAttemptCount(q.quiz_id);
+          return { ...q, questionCount, attemptCount, classroomTitle: c.title };
+        }));
+        allQuizzes.push(...enriched);
+      }
+      return allQuizzes;
+    } else {
+      const student = await userRepository.getStudentProfile(userId);
+      if (!student) throw new AppError('Student profile not found', 404);
+      const classrooms = await classroomRepository.findByStudentId(student.student_id);
+      const allQuizzes = [];
+      for (const c of classrooms) {
+        const quizzes = await quizRepository.findByClassroomId(c.classroom_id);
+        const enriched = await Promise.all(quizzes.map(async (q) => {
+          const questionCount = await quizRepository.getQuestionCount(q.quiz_id);
+          const attemptCount = await quizRepository.getAttemptCount(q.quiz_id);
+          return { ...q, questionCount, attemptCount, classroomTitle: c.title };
+        }));
+        allQuizzes.push(...enriched);
+      }
+      return allQuizzes;
+    }
   },
 
   async getDetail(quizId: string) {
