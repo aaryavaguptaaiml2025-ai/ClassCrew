@@ -42,15 +42,7 @@ console.log("CLIENT_URL:", env.CLIENT_URL);
 console.log("allowedOrigins:", allowedOrigins);
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (server-to-server, health checks)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    // In development, allow all origins
-    if (env.NODE_ENV !== 'production') return callback(null, true);
-    // In production, reject unknown origins
-    callback(new Error(`CORS: origin ${origin} not allowed`));
-  },
+  origin: true,
   credentials: true,
 }));
 
