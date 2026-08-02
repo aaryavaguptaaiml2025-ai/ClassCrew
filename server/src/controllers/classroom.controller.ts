@@ -4,6 +4,7 @@ import { classroomService } from '../services/classroom.service.js';
 import { userRepository } from '../repositories/user.repository.js';
 import { sendSuccess, sendCreated } from '../utils/response.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { mapClassroom, mapClassrooms, mapClassroomMember } from '../utils/mappers.js';
 
 export const classroomController = {
   async list(req: AuthenticatedRequest, res: Response, next: NextFunction) {
@@ -15,12 +16,12 @@ export const classroomController = {
         const teacher = await userRepository.getTeacherProfile(user.id);
         if (!teacher) throw new AppError('Teacher profile not found', 404);
         const classrooms = await classroomService.getTeacherClassrooms(teacher.teacher_id);
-        sendSuccess(res, classrooms);
+        sendSuccess(res, mapClassrooms(classrooms as any));
       } else {
         const student = await userRepository.getStudentProfile(user.id);
         if (!student) throw new AppError('Student profile not found', 404);
         const classrooms = await classroomService.getStudentClassrooms(student.student_id);
-        sendSuccess(res, classrooms);
+        sendSuccess(res, mapClassrooms(classrooms as any));
       }
     } catch (error) {
       next(error);
@@ -30,7 +31,7 @@ export const classroomController = {
   async detail(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const classroom = await classroomService.getClassroomDetail(req.params.id as string);
-      sendSuccess(res, classroom);
+      sendSuccess(res, mapClassroom(classroom as any));
     } catch (error) {
       next(error);
     }
@@ -43,7 +44,7 @@ export const classroomController = {
       const teacher = await userRepository.getTeacherProfile(user.id);
       if (!teacher) throw new AppError('Teacher profile not found', 404);
       const classroom = await classroomService.create(teacher.teacher_id, req.body);
-      sendCreated(res, classroom, 'Classroom created successfully');
+      sendCreated(res, mapClassroom(classroom as any), 'Classroom created successfully');
     } catch (error) {
       next(error);
     }
@@ -56,7 +57,7 @@ export const classroomController = {
       const teacher = await userRepository.getTeacherProfile(user.id);
       if (!teacher) throw new AppError('Teacher profile not found', 404);
       const classroom = await classroomService.update(req.params.id as string, teacher.teacher_id, req.body);
-      sendSuccess(res, classroom, 'Classroom updated successfully');
+      sendSuccess(res, mapClassroom(classroom as any), 'Classroom updated successfully');
     } catch (error) {
       next(error);
     }
@@ -82,7 +83,7 @@ export const classroomController = {
       const student = await userRepository.getStudentProfile(user.id);
       if (!student) throw new AppError('Student profile not found', 404);
       const classroom = await classroomService.join(student.student_id, req.body.joinCode, user.id);
-      sendSuccess(res, classroom, 'Successfully joined classroom');
+      sendSuccess(res, mapClassroom(classroom as any), 'Successfully joined classroom');
     } catch (error) {
       next(error);
     }
@@ -91,7 +92,7 @@ export const classroomController = {
   async members(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       const members = await classroomService.getMembers(req.params.id as string);
-      sendSuccess(res, members);
+      sendSuccess(res, (members as any[]).map(m => mapClassroomMember(m)));
     } catch (error) {
       next(error);
     }

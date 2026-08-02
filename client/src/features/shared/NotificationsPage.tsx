@@ -73,7 +73,7 @@ export default function NotificationsPage() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading notifications...</div>
       ) : notifications.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">🔔</div>
+          <div className="empty-state__icon"><Bell size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">No Notifications</h3>
           <p className="empty-state__text">You are all caught up! No recent notifications found.</p>
         </div>

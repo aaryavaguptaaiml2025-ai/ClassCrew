@@ -38,7 +38,7 @@ export default function StudentMarksPage() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading report card...</div>
       ) : marksList.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">🎓</div>
+          <div className="empty-state__icon"><GraduationCap size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">No Marks Published Yet</h3>
           <p className="empty-state__text">Your teachers will publish internal and examination scores here.</p>
         </div>

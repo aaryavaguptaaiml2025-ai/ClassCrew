@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { GraduationCap, Save, Search } from 'lucide-react';
+import { GraduationCap, Save, Search, BarChart3 } from 'lucide-react';
 import { api } from '@/services/api';
 import type { Classroom, ClassroomMember, Marks } from '@/types';
 import toast from 'react-hot-toast';
@@ -99,7 +99,7 @@ export default function TeacherMarks() {
       });
 
       if (res.success) {
-        toast.success('Gradebook saved successfully! 🎓');
+        toast.success('Gradebook saved successfully!');
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to save gradebook';
@@ -145,7 +145,7 @@ export default function TeacherMarks() {
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading gradebook...</div>
         ) : students.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state__icon">📊</div>
+            <div className="empty-state__icon"><BarChart3 size={40} color="var(--text-tertiary)" /></div>
             <h3 className="empty-state__title">No Enrolled Students</h3>
             <p className="empty-state__text">Students will appear in the gradebook once they join this classroom.</p>
           </div>

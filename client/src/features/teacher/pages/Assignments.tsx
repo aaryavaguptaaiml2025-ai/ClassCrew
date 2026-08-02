@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Plus, CheckCircle, Clock, Search, Eye } from 'lucide-react';
+import { FileText, Plus, CheckCircle, Clock, Search, Eye, PenLine, X } from 'lucide-react';
 import { api } from '@/services/api';
 import type { Assignment, Classroom, AssignmentSubmission } from '@/types';
 import toast from 'react-hot-toast';
@@ -168,7 +168,7 @@ export default function TeacherAssignments() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading assignments...</div>
       ) : filteredAssignments.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">📝</div>
+          <div className="empty-state__icon"><PenLine size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">No Assignments Found</h3>
           <p className="empty-state__text">Create assignments to post homework and projects to your classrooms.</p>
         </div>
@@ -211,7 +211,7 @@ export default function TeacherAssignments() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Create Assignment</h2>
-              <button className="modal__close" onClick={() => setIsCreateOpen(false)}>✕</button>
+              <button className="modal__close" onClick={() => setIsCreateOpen(false)}><X size={16} /></button>
             </div>
             <form onSubmit={handleCreateAssignment}>
               <div className="modal__body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -310,7 +310,7 @@ export default function TeacherAssignments() {
           <div className="modal" style={{ maxWidth: 640 }} onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Submissions: {selectedAssignment.title}</h2>
-              <button className="modal__close" onClick={() => setSelectedAssignment(null)}>✕</button>
+              <button className="modal__close" onClick={() => setSelectedAssignment(null)}><X size={16} /></button>
             </div>
             <div className="modal__body">
               {isLoadingSubmissions ? (
@@ -369,7 +369,7 @@ export default function TeacherAssignments() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Grade Submission: {gradingSubmission.studentName}</h2>
-              <button className="modal__close" onClick={() => setGradingSubmission(null)}>✕</button>
+              <button className="modal__close" onClick={() => setGradingSubmission(null)}><X size={16} /></button>
             </div>
             <form onSubmit={handleGradeSubmission}>
               <div className="modal__body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

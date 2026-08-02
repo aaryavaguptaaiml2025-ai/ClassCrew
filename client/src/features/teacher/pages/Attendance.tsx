@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarCheck, CheckCircle, XCircle, Save, Users } from 'lucide-react';
+import { CalendarCheck, CheckCircle, XCircle, Save, Users, ClipboardList } from 'lucide-react';
 import { api } from '@/services/api';
 import type { Classroom, ClassroomMember, Attendance } from '@/types';
 import toast from 'react-hot-toast';
@@ -94,7 +94,7 @@ export default function TeacherAttendance() {
       });
 
       if (res.success) {
-        toast.success('Attendance register saved successfully! 📋');
+        toast.success('Attendance register saved successfully!');
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to save attendance';
@@ -179,7 +179,7 @@ export default function TeacherAttendance() {
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading student register...</div>
         ) : students.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state__icon">📋</div>
+            <div className="empty-state__icon"><ClipboardList size={40} color="var(--text-tertiary)" /></div>
             <h3 className="empty-state__title">No Students Enrolled</h3>
             <p className="empty-state__text">Share the classroom code to enroll students before marking attendance.</p>
           </div>

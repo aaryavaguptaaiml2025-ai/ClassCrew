@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, Users, FileText, Brain, CalendarCheck, Plus, Copy, Check, ArrowRight
+  BookOpen, Users, FileText, Brain, CalendarCheck, Plus, Copy, Check, ArrowRight, X
 } from 'lucide-react';
 import { api } from '@/services/api';
 import type { DashboardStats, Classroom } from '@/types';
@@ -172,7 +172,7 @@ export default function TeacherDashboard() {
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading classrooms...</div>
         ) : classrooms.length === 0 ? (
           <div className="empty-state card">
-            <div className="empty-state__icon">📚</div>
+            <div className="empty-state__icon"><BookOpen size={40} color="var(--text-tertiary)" /></div>
             <h3 className="empty-state__title">No Classrooms Yet</h3>
             <p className="empty-state__text">Create your first classroom to start sharing assignments, quizzes, and tracking attendance.</p>
             <button className="btn btn--primary" onClick={() => setIsCreateOpen(true)}>
@@ -239,7 +239,7 @@ export default function TeacherDashboard() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Create New Classroom</h2>
-              <button className="modal__close" onClick={() => setIsCreateOpen(false)}>✕</button>
+              <button className="modal__close" onClick={() => setIsCreateOpen(false)}><X size={16} /></button>
             </div>
             <form onSubmit={handleCreateClassroom}>
               <div className="modal__body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

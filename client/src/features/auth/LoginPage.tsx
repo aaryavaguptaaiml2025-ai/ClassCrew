@@ -54,7 +54,7 @@ export default function LoginPage() {
       const result = await loginWithGoogle();
       if (result.needsRegistration) {
         // Google user exists but no DB profile — redirect to register to complete profile
-        toast('Please complete your profile to continue.', { icon: '📝' });
+        toast('Please complete your profile to continue.');
         navigate('/register');
       } else {
         toast.success('Welcome back!');

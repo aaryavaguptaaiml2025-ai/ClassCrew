@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, UserCheck, Plus, Search, KeyRound } from 'lucide-react';
+import { BookOpen, UserCheck, Plus, Search, KeyRound, X } from 'lucide-react';
 import { api } from '@/services/api';
 import type { Classroom } from '@/types';
 import toast from 'react-hot-toast';
@@ -44,7 +44,7 @@ export default function StudentClassrooms() {
     try {
       const res = await api.post<Classroom>('/classrooms/join', { joinCode: cleanCode });
       if (res.success) {
-        toast.success(`Successfully joined "${res.data.title}"! 🎉`);
+        toast.success(`Successfully joined "${res.data.title}"!`);
         setIsJoinOpen(false);
         setJoinCode('');
         fetchClassrooms();
@@ -91,7 +91,7 @@ export default function StudentClassrooms() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading classrooms...</div>
       ) : filteredClassrooms.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">🎒</div>
+          <div className="empty-state__icon"><BookOpen size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">{search ? 'No Classrooms Found' : 'No Enrolled Classrooms'}</h3>
           <p className="empty-state__text">
             {search ? `No classes matching "${search}".` : 'Ask your teacher for a 6-character classroom code to join your first class!'}
@@ -139,7 +139,7 @@ export default function StudentClassrooms() {
 
                 <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border-secondary)', display: 'flex', justifyContent: 'flex-end' }}>
                   <Link to={`/classrooms/${c.classroomId}`} className="btn btn--outline btn--sm">
-                    Enter Classroom →
+                    Open Classroom →
                   </Link>
                 </div>
               </div>
@@ -154,7 +154,7 @@ export default function StudentClassrooms() {
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Join a Classroom</h2>
-              <button className="modal__close" onClick={() => setIsJoinOpen(false)}>✕</button>
+              <button className="modal__close" onClick={() => setIsJoinOpen(false)}><X size={16} /></button>
             </div>
             <form onSubmit={handleJoinClassroom}>
               <div className="modal__body" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

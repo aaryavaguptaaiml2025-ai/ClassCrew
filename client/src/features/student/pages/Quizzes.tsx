@@ -93,7 +93,7 @@ export default function StudentQuizzes() {
       if (res.success) {
         setCompletedResult(res.data);
         setActiveQuiz(null);
-        toast.success('Quiz submitted! 🎉');
+        toast.success('Quiz submitted!');
         fetchQuizzes();
       }
     } catch (err: unknown) {
@@ -123,7 +123,7 @@ export default function StudentQuizzes() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading quizzes...</div>
       ) : quizzes.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">🧠</div>
+          <div className="empty-state__icon"><Brain size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">No Quizzes Available</h3>
           <p className="empty-state__text">You do not have any active or upcoming quizzes at this time.</p>
         </div>

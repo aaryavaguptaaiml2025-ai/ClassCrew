@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Plus, Trash2, Search, Eye, CheckCircle2 } from 'lucide-react';
+import { Brain, Plus, Trash2, Search, Eye, CheckCircle2, X } from 'lucide-react';
 import { api } from '@/services/api';
 import type { Quiz, Classroom, QuizQuestion, QuizAttempt } from '@/types';
 import toast from 'react-hot-toast';
@@ -109,7 +109,7 @@ export default function TeacherQuizzes() {
       });
 
       if (res.success) {
-        toast.success(`Quiz "${title}" created with ${questions.length} questions! 🎉`);
+        toast.success(`Quiz "${title}" created with ${questions.length} questions!`);
         setIsCreateOpen(false);
         setTitle('');
         setDescription('');
@@ -172,7 +172,7 @@ export default function TeacherQuizzes() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading quizzes...</div>
       ) : filteredQuizzes.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">🧠</div>
+          <div className="empty-state__icon"><Brain size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">No Quizzes Found</h3>
           <p className="empty-state__text">Create interactive quizzes with auto-grading for your students.</p>
         </div>
@@ -215,7 +215,7 @@ export default function TeacherQuizzes() {
           <div className="modal" style={{ maxWidth: 700 }} onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Create Interactive Quiz</h2>
-              <button className="modal__close" onClick={() => setIsCreateOpen(false)}>✕</button>
+              <button className="modal__close" onClick={() => setIsCreateOpen(false)}><X size={16} /></button>
             </div>
             <form onSubmit={handleCreateQuiz}>
               <div className="modal__body" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -374,7 +374,7 @@ export default function TeacherQuizzes() {
           <div className="modal" style={{ maxWidth: 640 }} onClick={(e) => e.stopPropagation()}>
             <div className="modal__header">
               <h2 className="modal__title">Quiz Results: {selectedQuiz.title}</h2>
-              <button className="modal__close" onClick={() => setSelectedQuiz(null)}>✕</button>
+              <button className="modal__close" onClick={() => setSelectedQuiz(null)}><X size={16} /></button>
             </div>
             <div className="modal__body">
               {isLoadingAttempts ? (

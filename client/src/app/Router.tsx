@@ -100,7 +100,7 @@ export default function AppRouter() {
               <RoleBasedWrapper teacherComp={<TeacherClassrooms />} studentComp={<StudentClassrooms />} />
             </ProtectedRoute>
           } />
-          <Route path="/classrooms/:id" element={
+          <Route path="/classrooms/:classroomId" element={
             <ProtectedRoute>
               <RoleBasedWrapper teacherComp={<ClassroomDetailPage />} studentComp={<ClassroomDetailPage />} />
             </ProtectedRoute>

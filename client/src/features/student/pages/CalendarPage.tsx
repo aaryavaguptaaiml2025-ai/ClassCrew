@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarDays, Clock, FileText, Brain, Bookmark } from 'lucide-react';
+import { CalendarDays, Clock, FileText, Brain, Bookmark, Calendar } from 'lucide-react';
 import { api } from '@/services/api';
 import type { CalendarEvent } from '@/types';
 import toast from 'react-hot-toast';
@@ -38,7 +38,7 @@ export default function StudentCalendarPage() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-tertiary)' }}>Loading schedule...</div>
       ) : events.length === 0 ? (
         <div className="empty-state card">
-          <div className="empty-state__icon">📅</div>
+          <div className="empty-state__icon"><Calendar size={40} color="var(--text-tertiary)" /></div>
           <h3 className="empty-state__title">No Scheduled Events</h3>
           <p className="empty-state__text">You have no upcoming deadlines or scheduled quizzes on your calendar.</p>
         </div>

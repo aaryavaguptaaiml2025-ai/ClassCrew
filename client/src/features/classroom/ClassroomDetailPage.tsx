@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, Users, FileText, Brain, CalendarCheck, GraduationCap, Copy, Check, Plus, ArrowLeft, Trash2, Edit
+  BookOpen, Users, FileText, Brain, CalendarCheck, GraduationCap, Copy, Check, Plus, ArrowLeft, Trash2, Edit, ClipboardList
 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,7 +10,7 @@ import type { Classroom, ClassroomMember, Assignment, Quiz } from '@/types';
 import toast from 'react-hot-toast';
 
 export default function ClassroomDetailPage() {
-  const { id } = useParams<{ id: string }>();
+  const { classroomId } = useParams<{ classroomId: string }>();
   const { user } = useAuth();
   const isTeacher = user?.role === 'teacher';
 
@@ -23,15 +23,15 @@ export default function ClassroomDetailPage() {
   const [copiedCode, setCopiedCode] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    if (!classroomId) return;
     const fetchClassroomData = async () => {
       try {
         setIsLoading(true);
         const [cRes, mRes, aRes, qRes] = await Promise.all([
-          api.get<Classroom>(`/classrooms/${id}`),
-          api.get<ClassroomMember[]>(`/classrooms/${id}/members`),
-          api.get<Assignment[]>(`/assignments?classroomId=${id}`),
-          api.get<Quiz[]>(`/quizzes?classroomId=${id}`),
+          api.get<Classroom>(`/classrooms/${classroomId}`),
+          api.get<ClassroomMember[]>(`/classrooms/${classroomId}/members`),
+          api.get<Assignment[]>(`/assignments?classroomId=${classroomId}`),
+          api.get<Quiz[]>(`/quizzes?classroomId=${classroomId}`),
         ]);
         if (cRes.success) setClassroom(cRes.data);
         if (mRes.success) setMembers(mRes.data);
@@ -45,7 +45,7 @@ export default function ClassroomDetailPage() {
       }
     };
     fetchClassroomData();
-  }, [id]);
+  }, [classroomId]);
 
   const copyCode = () => {
     if (!classroom?.joinCode) return;
@@ -192,7 +192,7 @@ export default function ClassroomDetailPage() {
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           {members.length === 0 ? (
             <div className="empty-state">
-              <div className="empty-state__icon">👥</div>
+              <div className="empty-state__icon"><Users size={40} color="var(--text-tertiary)" /></div>
               <h3 className="empty-state__title">No Students Joined</h3>
               <p className="empty-state__text">Share the join code <strong>{classroom.joinCode}</strong> with your students to enroll them.</p>
             </div>
@@ -232,7 +232,7 @@ export default function ClassroomDetailPage() {
           )}
           {assignments.length === 0 ? (
             <div className="empty-state card">
-              <div className="empty-state__icon">📋</div>
+              <div className="empty-state__icon"><ClipboardList size={40} color="var(--text-tertiary)" /></div>
               <h3 className="empty-state__title">No Assignments</h3>
               <p className="empty-state__text">There are currently no assignments in this classroom.</p>
             </div>
@@ -267,7 +267,7 @@ export default function ClassroomDetailPage() {
           )}
           {quizzes.length === 0 ? (
             <div className="empty-state card">
-              <div className="empty-state__icon">🧠</div>
+              <div className="empty-state__icon"><Brain size={40} color="var(--text-tertiary)" /></div>
               <h3 className="empty-state__title">No Quizzes</h3>
               <p className="empty-state__text">There are currently no quizzes scheduled for this classroom.</p>
             </div>

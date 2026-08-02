@@ -126,7 +126,7 @@ export default function RegisterPage() {
       } else {
         await register(email, password, profileData);
       }
-      toast.success('Account created! Welcome to ClassCrew 🎉');
+      toast.success('Account created! Welcome to ClassCrew!');
       navigate('/dashboard');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Registration failed';
@@ -175,27 +175,7 @@ export default function RegisterPage() {
             exit="exit"
             transition={{ duration: 0.3 }}
           >
-            {/* Role Selector */}
-            <div className="role-selector" style={{ marginBottom: 20 }}>
-              <button
-                type="button"
-                className={`role-selector__option ${role === 'student' ? 'role-selector__option--active' : ''}`}
-                onClick={() => setRole('student')}
-              >
-                <span className="role-selector__icon">🎓</span>
-                <span className="role-selector__label">Student</span>
-                <span className="role-selector__desc">Join classrooms</span>
-              </button>
-              <button
-                type="button"
-                className={`role-selector__option ${role === 'teacher' ? 'role-selector__option--active' : ''}`}
-                onClick={() => setRole('teacher')}
-              >
-                <span className="role-selector__icon">📚</span>
-                <span className="role-selector__label">Teacher</span>
-                <span className="role-selector__desc">Manage classrooms</span>
-              </button>
-            </div>
+
 
             <div className="auth-form">
               <div className="auth-form__group">
@@ -306,13 +286,6 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => { 
                   if (needsRegistration && firebaseUser) {
-                    // Do not allow going back to step 1 if Google register
-                    // But maybe we should? If they want to switch accounts?
-                    // Actually, let's keep it simple and just setStep(1).
-                    // If they are in Google mode, they shouldn't see step 1 password.
-                    // Oh well, if they hit back, they can see step 1 but password will be there.
-                    // Wait, if they are needsRegistration, step 1 is bypassed.
-                    // We can check if it's google reg and prevent back, or let them go back but without password.
                     setStep(1); setErrors({}); setApiError(''); 
                   } else {
                     setStep(1); setErrors({}); setApiError(''); 
@@ -327,6 +300,28 @@ export default function RegisterPage() {
                 ← Back
               </button>
               <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Step 2 of 2</span>
+            </div>
+
+            {/* Role Selector */}
+            <div className="role-selector" style={{ marginBottom: 20, marginTop: 12 }}>
+              <button
+                type="button"
+                className={`role-selector__option ${role === 'student' ? 'role-selector__option--active' : ''}`}
+                onClick={() => setRole('student')}
+              >
+                <span className="role-selector__icon"><GraduationCap size={20} /></span>
+                <span className="role-selector__label">Student</span>
+                <span className="role-selector__desc">Join classrooms</span>
+              </button>
+              <button
+                type="button"
+                className={`role-selector__option ${role === 'teacher' ? 'role-selector__option--active' : ''}`}
+                onClick={() => setRole('teacher')}
+              >
+                <span className="role-selector__icon"><BookOpen size={20} /></span>
+                <span className="role-selector__label">Teacher</span>
+                <span className="role-selector__desc">Manage classrooms</span>
+              </button>
             </div>
 
             {role === 'student' ? (
