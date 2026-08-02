@@ -19,6 +19,8 @@ import analyticsRoutes from './routes/analytics.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
+console.log("=== BUILD TEST ===");
+console.log("Build time:", new Date().toISOString());
 const PORT = env.PORT;
 
 app.use(
@@ -68,7 +70,10 @@ app.use('/api', generalLimiter);
 
 // Health check endpoints (Render requires GET / or /health to return 200)
 app.get('/', (_req, res) => {
-  res.json({ status: 'ok', service: 'classcrew-api' });
+  res.json({
+    status: 'ok',
+    version: 'BUILD_TEST_123',
+  });
 });
 
 app.get('/api/health', (_req, res) => {
