@@ -19,6 +19,7 @@ import analyticsRoutes from './routes/analytics.routes.js';
 import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
+app.set('trust proxy', 1);
 console.log("=== BUILD TEST ===");
 console.log("Build time:", new Date().toISOString());
 const PORT = env.PORT;
@@ -69,11 +70,8 @@ app.use('/api/auth', authLimiter);
 app.use('/api', generalLimiter);
 
 // Health check endpoints (Render requires GET / or /health to return 200)
-app.get('/api/debug', (_req, res) => {
-  res.json({
-    version: 'debug-v1',
-    time: new Date().toISOString(),
-  });
+app.get('/', (_req, res) => {
+  res.json({ status: 'ok', service: 'classcrew-api' });
 });
 
 app.get('/api/health', (_req, res) => {
