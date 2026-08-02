@@ -20,8 +20,6 @@ import notificationRoutes from './routes/notification.routes.js';
 
 const app = express();
 app.set('trust proxy', 1);
-console.log("=== BUILD TEST ===");
-console.log("Build time:", new Date().toISOString());
 const PORT = env.PORT;
 
 app.use(
@@ -40,12 +38,13 @@ const allowedOrigins = [
   'http://127.0.0.1:5174',
 ];
 
-console.log("NODE_ENV:", env.NODE_ENV);
-console.log("CLIENT_URL:", env.CLIENT_URL);
-console.log("allowedOrigins:", allowedOrigins);
-
 app.use(cors({
-  origin: true,
+  origin: [
+    env.CLIENT_URL,
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+  ],
   credentials: true,
 }));
 
