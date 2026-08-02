@@ -37,6 +37,10 @@ const allowedOrigins = [
   'http://127.0.0.1:5174',
 ];
 
+console.log("NODE_ENV:", env.NODE_ENV);
+console.log("CLIENT_URL:", env.CLIENT_URL);
+console.log("allowedOrigins:", allowedOrigins);
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (server-to-server, health checks)
