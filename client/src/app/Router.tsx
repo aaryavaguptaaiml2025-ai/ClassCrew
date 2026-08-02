@@ -45,11 +45,14 @@ function ProtectedRoute({ children, allowedRole }: { children: React.ReactNode; 
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, needsRegistration } = useAuth();
 
   if (isLoading) return <LoadingScreen />;
   if (isAuthenticated) {
     return <Navigate to={user?.role === 'teacher' ? '/dashboard' : '/my-classrooms'} replace />;
+  }
+  if (needsRegistration) {
+    return <Navigate to="/register" replace />;
   }
   return <>{children}</>;
 }

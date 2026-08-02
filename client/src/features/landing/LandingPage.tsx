@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, BookOpen, FileText, Brain, BarChart3, CalendarCheck, Bell } from 'lucide-react';
+import ClassCrewLogo from '@/components/shared/Logo';
 import '@/styles/landing.css';
 
 const FEATURES = [
-  { icon: 'CC1', title: 'Smart Classrooms', text: 'Create classrooms instantly with auto-generated join codes. Students join in seconds.', color: 'rgba(168,85,247,0.1)' },
-  { icon: 'CC2', title: 'Assignments', text: 'Create, publish, and track assignments. Students submit with one click. Teachers review inline.', color: 'rgba(236,72,153,0.1)' },
-  { icon: 'CC3', title: 'Interactive Quizzes', text: 'MCQ and true/false quizzes with auto-grading, timers, and instant score reporting.', color: 'rgba(99,102,241,0.1)' },
-  { icon: 'CC4', title: 'Live Analytics', text: 'Real-time dashboards with attendance trends, performance charts, and class insights.', color: 'rgba(59,130,246,0.1)' },
-  { icon: 'CC5', title: 'Attendance', text: 'Mark attendance in bulk. Students see their percentage live. Teachers see patterns.', color: 'rgba(34,197,94,0.1)' },
-  { icon: 'CC6', title: 'Notifications', text: 'Instant alerts for new assignments, quiz results, and classroom updates.', color: 'rgba(245,158,11,0.1)' },
+  { icon: BookOpen, title: 'Smart Classrooms', text: 'Create classrooms instantly with auto-generated join codes. Students join in seconds.', color: 'rgba(168,85,247,0.15)', iconColor: '#a855f7' },
+  { icon: FileText, title: 'Assignments', text: 'Create, publish, and track assignments. Students submit with one click. Teachers review inline.', color: 'rgba(236,72,153,0.15)', iconColor: '#ec4899' },
+  { icon: Brain, title: 'Interactive Quizzes', text: 'MCQ and true/false quizzes with auto-grading, timers, and instant score reporting.', color: 'rgba(99,102,241,0.15)', iconColor: '#6366f1' },
+  { icon: BarChart3, title: 'Live Analytics', text: 'Real-time dashboards with attendance trends, performance charts, and class insights.', color: 'rgba(59,130,246,0.15)', iconColor: '#3b82f6' },
+  { icon: CalendarCheck, title: 'Attendance', text: 'Mark attendance in bulk. Students see their percentage live. Teachers see patterns.', color: 'rgba(34,197,94,0.15)', iconColor: '#22c55e' },
+  { icon: Bell, title: 'Notifications', text: 'Instant alerts for new assignments, quiz results, and classroom updates.', color: 'rgba(245,158,11,0.15)', iconColor: '#f59e0b' },
 ];
 
 const STEPS = [
@@ -44,8 +45,7 @@ export default function LandingPage() {
       {/* Navbar */}
       <nav className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`}>
         <div className="landing-nav__brand">
-          <div className="landing-nav__logo">CC</div>
-          <span className="landing-nav__name">ClassCrew</span>
+          <ClassCrewLogo size={32} showText={true} />
         </div>
         <div className="landing-nav__actions">
           <button
@@ -127,23 +127,26 @@ export default function LandingPage() {
         </div>
 
         <div className="landing-features__grid">
-          {FEATURES.map((feature, i) => (
-            <motion.div
-              key={feature.title}
-              className="feature-card"
-              custom={i}
-              variants={fadeUp}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-            >
-              <div className="feature-card__icon" style={{ background: feature.color }}>
-                {feature.icon}
-              </div>
-              <h3 className="feature-card__title">{feature.title}</h3>
-              <p className="feature-card__text">{feature.text}</p>
-            </motion.div>
-          ))}
+          {FEATURES.map((feature, i) => {
+            const IconComponent = feature.icon;
+            return (
+              <motion.div
+                key={feature.title}
+                className="feature-card"
+                custom={i}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: '-40px' }}
+              >
+                <div className="feature-card__icon" style={{ background: feature.color }}>
+                  <IconComponent size={22} color={feature.iconColor} />
+                </div>
+                <h3 className="feature-card__title">{feature.title}</h3>
+                <p className="feature-card__text">{feature.text}</p>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
@@ -199,7 +202,10 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="landing-footer">
-        <p className="landing-footer__text">&copy; 2026 ClassCrew. Built for education.</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <ClassCrewLogo size={24} showText={true} />
+          <span style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>&copy; 2026 ClassCrew.</span>
+        </div>
         <div className="landing-footer__links">
           <a href="#" className="landing-footer__link">Privacy</a>
           <a href="#" className="landing-footer__link">Terms</a>

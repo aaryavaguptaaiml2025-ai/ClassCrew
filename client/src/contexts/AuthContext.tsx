@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   sendPasswordResetEmail,
   type User as FirebaseUser,
@@ -82,6 +84,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Process redirect sign-in result if returning from a popup fallback
+    getRedirectResult(auth).catch(() => {
+      // Ignore if no redirect result was present
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       setFirebaseUser(fbUser);
       if (fbUser) {
@@ -113,15 +120,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginWithGoogle = async (): Promise<{ needsRegistration: boolean }> => {
-    const credential = await signInWithPopup(auth, googleProvider);
-    setFirebaseUser(credential.user);
-    const hasProfile = await fetchUserProfile();
-    if (!hasProfile) {
-      // Keep user signed in — they need to complete registration
-      setNeedsRegistration(true);
-      return { needsRegistration: true };
+    try {
+      const credential = await signInWithPopup(auth, googleProvider);
+      setFirebaseUser(credential.user);
+      const hasProfile = await fetchUserProfile();
+      if (!hasProfile) {
+        // Keep user signed in — they need to complete registration
+        setNeedsRegistration(true);
+        return { needsRegistration: true };
+      }
+      return { needsRegistration: false };
+    } catch (error: any) {
+      if (
+        error?.code === 'auth/popup-blocked' ||
+        error?.code === 'auth/cancelled-popup-request' ||
+        error?.message?.includes('popup-blocked')
+      ) {
+        // Fallback to redirect mode when popups are blocked by browser / deployment
+        await signInWithRedirect(auth, googleProvider);
+        return { needsRegistration: false };
+      }
+      throw error;
     }
-    return { needsRegistration: false };
   };
 
   // Register with Google: user is already authenticated via Google popup,

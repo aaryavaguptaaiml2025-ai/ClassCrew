@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import ClassCrewLogo from '@/components/shared/Logo';
 import '@/styles/components.css';
 
 const NAV_ITEMS = [
@@ -41,8 +42,7 @@ export default function TeacherLayout({ children }: { children: ReactNode }) {
   const sidebarContent = (
     <>
       <div className="sidebar__brand">
-        <div className="sidebar__logo">CC</div>
-        <span className="sidebar__brand-name">ClassCrew</span>
+        <ClassCrewLogo size={30} showText={true} />
       </div>
 
       <p className="sidebar__section-label">Main Menu</p>
