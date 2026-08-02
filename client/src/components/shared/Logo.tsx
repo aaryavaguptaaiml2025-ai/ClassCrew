@@ -1,4 +1,4 @@
-import React from 'react';
+import { useId } from 'react';
 
 interface LogoProps {
   size?: number;
@@ -7,12 +7,15 @@ interface LogoProps {
   textClassName?: string;
 }
 
-export const ClassCrewLogo: React.FC<LogoProps> = ({
+export const ClassCrewLogo = ({
   size = 36,
   showText = false,
   className = '',
   textClassName = '',
-}) => {
+}: LogoProps) => {
+  const uniqueId = useId();
+  const gradientId = `cc-grad-${uniqueId}`;
+
   return (
     <div
       className={className}
@@ -27,43 +30,36 @@ export const ClassCrewLogo: React.FC<LogoProps> = ({
         style={{ flexShrink: 0 }}
       >
         <defs>
-          <linearGradient id="classcrew-logo-gradient" x1="20" y1="180" x2="180" y2="20" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="20" y1="180" x2="180" y2="20" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#6366f1" />
             <stop offset="50%" stopColor="#a855f7" />
             <stop offset="100%" stopColor="#ec4899" />
           </linearGradient>
         </defs>
-
-        {/* Outer Triangular Base */}
         <path
           d="M 32 160 L 158 160 L 100 28 L 32 160 Z"
-          stroke="url(#classcrew-logo-gradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="11"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-
-        {/* Layered Ribbon Structure */}
         <path
           d="M 60 160 L 100 78 L 132 128"
-          stroke="url(#classcrew-logo-gradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="9"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-
         <path
           d="M 72 136 L 118 136 M 84 112 L 100 88"
-          stroke="url(#classcrew-logo-gradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="8"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-
-        {/* Upward Growth Arrow */}
         <path
           d="M 122 122 L 180 64 M 180 64 L 152 64 M 180 64 L 180 92"
-          stroke="url(#classcrew-logo-gradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth="11"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -80,7 +76,7 @@ export const ClassCrewLogo: React.FC<LogoProps> = ({
             color: 'var(--text-primary)',
           }}
         >
-          CLASS CREW
+          ClassCrew
         </span>
       )}
     </div>

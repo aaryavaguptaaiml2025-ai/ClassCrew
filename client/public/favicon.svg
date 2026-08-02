@@ -7,7 +7,7 @@
     </linearGradient>
   </defs>
 
-  {/* Outer Triangular Base */}
+  <!-- Outer Triangular Base -->
   <path
     d="M 32 160 L 158 160 L 100 28 L 32 160 Z"
     stroke="url(#classcrew-logo-gradient)"
@@ -16,7 +16,7 @@
     stroke-linejoin="round"
   />
 
-  {/* Layered Ribbon Structure */}
+  <!-- Layered Ribbon Structure -->
   <path
     d="M 60 160 L 100 78 L 132 128"
     stroke="url(#classcrew-logo-gradient)"
@@ -33,7 +33,7 @@
     stroke-linejoin="round"
   />
 
-  {/* Upward Growth Arrow */}
+  <!-- Upward Growth Arrow -->
   <path
     d="M 122 122 L 180 64 M 180 64 L 152 64 M 180 64 L 180 92"
     stroke="url(#classcrew-logo-gradient)"
