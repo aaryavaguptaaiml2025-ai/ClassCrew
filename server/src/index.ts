@@ -69,10 +69,10 @@ app.use('/api/auth', authLimiter);
 app.use('/api', generalLimiter);
 
 // Health check endpoints (Render requires GET / or /health to return 200)
-app.get('/', (_req, res) => {
+app.get('/api/debug', (_req, res) => {
   res.json({
-    status: 'ok',
-    version: 'BUILD_TEST_123',
+    version: 'debug-v1',
+    time: new Date().toISOString(),
   });
 });
 
